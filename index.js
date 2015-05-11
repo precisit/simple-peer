@@ -425,6 +425,7 @@ Peer.prototype._onIceCandidate = function (event) {
     self._iceComplete = true
     self.emit('_iceComplete')
   }
+}
 
 Peer.prototype._processStoredIceCandidates = function() {
   self.storeIce.forEach(function(candidate) {
