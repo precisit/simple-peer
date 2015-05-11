@@ -287,7 +287,7 @@ Peer.prototype._createOffer = function () {
     speedHack(offer)
     self._pc.setLocalDescription(offer, noop, self._onError.bind(self))
     self.readyForIce = true
-    self._processStoredCandidates()
+    processStoredCandidates()
     var sendOffer = function () {
       self._debug('signal')
       self.emit('signal', self._pc.localDescription || offer)
@@ -306,7 +306,7 @@ Peer.prototype._createAnswer = function () {
     speedHack(answer)
     self._pc.setLocalDescription(answer, noop, self._onError.bind(self))
     self.readyForIce = true
-    self._processStoredCandidates()
+    processStoredCandidates()
     var sendAnswer = function () {
       self._debug('signal')
       self.emit('signal', self._pc.localDescription || answer)
@@ -417,7 +417,7 @@ Peer.prototype._onSignalingStateChange = function () {
 Peer.prototype._onIceCandidate = function (event) {
   var self = this
   if (self.destroyed) return
-  if (!readyForIce) {
+  if (!self.readyForIce) {
     self.storeIce.push(candidate);
   } else if (event.candidate && self.trickle) {
     self.emit('signal', { candidate: event.candidate })
@@ -425,12 +425,6 @@ Peer.prototype._onIceCandidate = function (event) {
     self._iceComplete = true
     self.emit('_iceComplete')
   }
-}
-
-Peer.prototype._processStoredIceCandidates = function() {
-  self.storeIce.forEach(function(candidate) {
-    self.emit('signal', { candidate: new IceCandidate(candidate) })
-  })
 }
 
 Peer.prototype._onChannelMessage = function (event) {
@@ -507,3 +501,9 @@ function speedHack (obj) {
 }
 
 function noop () {}
+
+function processStoredCandidates () {
+  self.storeIce.forEach(function(candidate) {
+    self.emit('signal', { candidate: new IceCandidate(candidate) })
+  })
+}
