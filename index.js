@@ -422,7 +422,8 @@ Peer.prototype._onIceCandidate = function (event) {
     console.log("Not ready for candidates. Candidate stored in buffer.")
     self.storeIce.push(event.candidate);
     console.log("Store ice array ", self.storeIce)
-  } else if (event.candidate && self.trickle) {
+  } else if (self.readyForIce && event.candidate && self.trickle) {
+    console.log("Ready for ice, adding candidate!")
     self.emit('signal', { candidate: event.candidate })
   } else if (!event.candidate) {
     self._iceComplete = true
