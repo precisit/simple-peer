@@ -49,6 +49,8 @@ function Peer (opts) {
 
   self.destroyed = false
   self.connected = false
+  self.readyForIce = false
+  self.storeIce = []
 
   self.remoteAddress = undefined
   self.remoteFamily = undefined
@@ -192,6 +194,7 @@ Peer.prototype._destroy = function (err, onclose) {
 
   self.destroyed = true
   self.connected = false
+  self.readyForIce = false
   self._pcReady = false
   self._channelReady = false
 
@@ -283,6 +286,8 @@ Peer.prototype._createOffer = function () {
     if (self.destroyed) return
     speedHack(offer)
     self._pc.setLocalDescription(offer, noop, self._onError.bind(self))
+    self.readyForIce = true
+    self._processStoredCandidates()
     var sendOffer = function () {
       self._debug('signal')
       self.emit('signal', self._pc.localDescription || offer)
@@ -300,6 +305,8 @@ Peer.prototype._createAnswer = function () {
     if (self.destroyed) return
     speedHack(answer)
     self._pc.setLocalDescription(answer, noop, self._onError.bind(self))
+    self.readyForIce = true
+    self._processStoredCandidates()
     var sendAnswer = function () {
       self._debug('signal')
       self.emit('signal', self._pc.localDescription || answer)
@@ -410,12 +417,19 @@ Peer.prototype._onSignalingStateChange = function () {
 Peer.prototype._onIceCandidate = function (event) {
   var self = this
   if (self.destroyed) return
-  if (event.candidate && self.trickle) {
+  if (!readyForIce) {
+    self.storeIce.push(candidate);
+  } else if (event.candidate && self.trickle) {
     self.emit('signal', { candidate: event.candidate })
   } else if (!event.candidate) {
     self._iceComplete = true
     self.emit('_iceComplete')
   }
+
+Peer.prototype._processStoredIceCandidates = function() {
+  self.storeIce.forEach(function(candidate) {
+    self.emit('signal', { candidate: new IceCandidate(candidate) })
+  })
 }
 
 Peer.prototype._onChannelMessage = function (event) {
