@@ -23,6 +23,8 @@ function Peer (opts) {
   if (!(self instanceof Peer)) return new Peer(opts)
   if (!opts) opts = {}
 
+  console.log("Creating new Peer object.")
+
   extend(self, {
     initiator: false,
     stream: false,
@@ -149,11 +151,13 @@ Peer.prototype.signal = function (data) {
   }
   self._debug('signal()')
   if (data.sdp) {
+    console.log('SDP offer')
     self._pc.setRemoteDescription(new (self._wrtc.RTCSessionDescription)(data), function () {
       if (self._pc.remoteDescription.type === 'offer') self._createAnswer()
     }, self._onError.bind(self))
   }
   if (data.candidate) {
+    console.log('ICE candidate')
     try {
       self._pc.addIceCandidate(
         new (self._wrtc.RTCIceCandidate)(data.candidate), noop, self._onError.bind(self)
