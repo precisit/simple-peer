@@ -288,7 +288,7 @@ Peer.prototype._createOffer = function () {
     speedHack(offer)
     self._pc.setLocalDescription(offer, noop, self._onError.bind(self))
     self.readyForIce = true
-    processStoredCandidates()
+    processStoredCandidates(self)
     var sendOffer = function () {
       self._debug('signal')
       self.emit('signal', self._pc.localDescription || offer)
@@ -307,7 +307,7 @@ Peer.prototype._createAnswer = function () {
     speedHack(answer)
     self._pc.setLocalDescription(answer, noop, self._onError.bind(self))
     self.readyForIce = true
-    processStoredCandidates()
+    processStoredCandidates(self)
     var sendAnswer = function () {
       self._debug('signal')
       self.emit('signal', self._pc.localDescription || answer)
@@ -420,7 +420,7 @@ Peer.prototype._onIceCandidate = function (event) {
   if (self.destroyed) return
   if (!self.readyForIce) {
     console.log("Not ready for candidates. Candidate stored in buffer.")
-    self.storeIce.push(event.candidate);
+    self.storeIce.push(event.candidate)
     console.log("Store ice array ", self.storeIce)
   } else if (self.readyForIce && event.candidate && self.trickle) {
     console.log("Ready for ice, adding candidate!")
@@ -506,9 +506,9 @@ function speedHack (obj) {
 
 function noop () {}
 
-function processStoredCandidates () {
+function processStoredCandidates (peer) {
   console.log("Processing stored candidates.")
-  self.storeIce.forEach(function(candidate) {
+  peer.storeIce.forEach(function(candidate) {
     self.emit('signal', { candidate: new IceCandidate(candidate) })
   })
 }
