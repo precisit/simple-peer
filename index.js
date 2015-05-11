@@ -194,6 +194,7 @@ Peer.prototype._destroy = function (err, onclose) {
 
   self.destroyed = true
   self.connected = false
+  self.storeIce = []
   self.readyForIce = false
   self._pcReady = false
   self._channelReady = false
@@ -419,7 +420,7 @@ Peer.prototype._onIceCandidate = function (event) {
   if (self.destroyed) return
   if (!self.readyForIce) {
     console.log("Not ready for candidates. Candidate stored in buffer.")
-    self.storeIce.push(candidate);
+    self.storeIce.push(event.candidate);
   } else if (event.candidate && self.trickle) {
     self.emit('signal', { candidate: event.candidate })
   } else if (!event.candidate) {
