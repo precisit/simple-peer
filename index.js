@@ -418,6 +418,7 @@ Peer.prototype._onIceCandidate = function (event) {
   var self = this
   if (self.destroyed) return
   if (!self.readyForIce) {
+    console.log("Not ready for candidates. Candidate stored in buffer.")
     self.storeIce.push(candidate);
   } else if (event.candidate && self.trickle) {
     self.emit('signal', { candidate: event.candidate })
@@ -503,6 +504,7 @@ function speedHack (obj) {
 function noop () {}
 
 function processStoredCandidates () {
+  console.log("Processing stored candidates.")
   self.storeIce.forEach(function(candidate) {
     self.emit('signal', { candidate: new IceCandidate(candidate) })
   })
