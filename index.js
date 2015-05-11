@@ -326,6 +326,7 @@ Peer.prototype._onIceConnectionStateChange = function () {
   self.emit('iceConnectionStateChange', iceGatheringState, iceConnectionState)
   if (iceConnectionState === 'connected' || iceConnectionState === 'completed') {
     self._pcReady = true
+    console.log('Ice connection state ', iceConnectionState)
     self._maybeReady()
   }
   if (iceConnectionState === 'disconnected' || iceConnectionState === 'closed') {
