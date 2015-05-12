@@ -291,7 +291,6 @@ Peer.prototype._createOffer = function () {
     speedHack(offer)
     self._pc.setLocalDescription(offer, noop, self._onError.bind(self))
     self.readyForIce = true
-    processStoredCandidates(self)
     var sendOffer = function () {
       self._debug('signal')
       self.emit('signal', self._pc.localDescription || offer)
