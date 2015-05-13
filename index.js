@@ -152,6 +152,7 @@ Peer.prototype.signal = function (data) {
   if (data.sdp) {
     console.log('SDP offer')
     self._pc.setRemoteDescription(new (self._wrtc.RTCSessionDescription)(data), function () {
+      console.log('Remote description set, creating answer')
       if (self._pc.remoteDescription.type === 'offer') self._createAnswer()
     }, self._onError.bind(self))
   }
