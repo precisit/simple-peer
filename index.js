@@ -94,10 +94,12 @@ function Peer (opts) {
       // Half open connections are currently not supported.
       // Wait a bit before destroying so the datachannel flushes.
       // TODO: is there a more reliable way to accomplish this?
+      console.log('Close connection when finished writing.')
       setTimeout(function () {
         self._destroy()
       }, 100)
     } else {
+      console.log('Will destroy peer. No connection when finished writing data.')
       // If data channel is not connected when local peer is finished writing, wait until
       // data is flushed to network at "connect" event.
       // TODO: is there a more reliable way to accomplish this?
