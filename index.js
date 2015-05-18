@@ -199,7 +199,7 @@ Peer.prototype._destroy = function (err, onclose) {
 
   self.destroyed = true
   self.connected = false
-  self.storeIce = []
+
   self.readyForIce = false
   self._pcReady = false
   self._channelReady = false
